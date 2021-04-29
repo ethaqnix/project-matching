@@ -1,0 +1,48 @@
+{
+    "first_name": "John",
+    "id": 1401,
+    "last_name": "Smith",
+    "projects": [
+        {
+            "id": 1025,
+            "name": "Absolute project",
+            "description": "test project"
+        }
+    ],
+    "needs": [
+        {
+            "id": 65,
+            "content": "Relations sociales"
+        },
+        {
+            "id": 82,
+            "content": "Photo"
+        },
+        {
+            "id": 10,
+            "content": "Développement durable"
+        },
+        {
+            "id": 13,
+            "content": "Recherche de partenaires et sponsors"
+        },
+        {
+            "id": 76,
+            "content": "Marketing digital"
+        }
+    ],
+    "skills": [
+        {
+            "id" : 15,
+            "content" : "Gestion d'un projet de voyage"
+        },
+        {
+            "id": 82,
+            "content": "Organiser des événements"
+        },
+        {
+            "id": 16,
+            "content": "Autres langues"
+        }
+    ]
+}
