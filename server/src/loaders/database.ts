@@ -9,10 +9,6 @@ import { list_of_needs } from "../data/list_of_needs.json";
 import { Types as MongooseTypes } from "mongoose";
 
 export default async (): Promise<void> => {
-  await usersCollection.deleteMany();
-  await skillsCollection.deleteMany();
-  await projectsCollection.deleteMany();
-
   const skills = await skillsCollection.find();
   if (skills.length === 0) {
     await skillsCollection.insertMany(
@@ -46,10 +42,12 @@ export default async (): Promise<void> => {
           needs: needs.map((need) => MongooseTypes.ObjectId(need.id)),
           projects: currentUserProjects.map(
             ({ id: projectId, name, description }) => {
+              const mongoProjectId = MongooseTypes.ObjectId(projectId);
+
               projectsCollection.insertMany([
-                { _id: MongooseTypes.ObjectId(projectId), name, description },
+                { _id: mongoProjectId, name, description },
               ]);
-              return MongooseTypes.ObjectId(projectId);
+              return mongoProjectId;
             }
           ),
         },
@@ -64,17 +62,15 @@ export default async (): Promise<void> => {
             _id: MongooseTypes.ObjectId(id),
             firstName: first_name,
             lastName: last_name,
-            skills:
-              currentUserSkills?.map((skill) =>
-                MongooseTypes.ObjectId(skill.id)
-              ) || [],
+            skills: currentUserSkills?.map((skill) => skill.id) || [],
             projects: userProjects.map(
               ({ id: projectId, name, description }) => {
+                const MongoProjectId = MongooseTypes.ObjectId(projectId);
                 projectsCollection.insertMany([
-                  { _id: MongooseTypes.ObjectId(projectId), name, description },
+                  { _id: MongoProjectId, name, description },
                 ]);
 
-                return MongooseTypes.ObjectId(projectId);
+                return MongoProjectId;
               }
             ),
           })

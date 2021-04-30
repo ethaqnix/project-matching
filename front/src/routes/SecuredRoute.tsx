@@ -4,10 +4,15 @@ import { IRoute } from "./routes";
 
 type OwnProps = IRoute;
 
-const SecuredRoute: FunctionComponent<OwnProps> = ({ component: Component , title, isPrivate, ...rest }) => {
+const SecuredRoute: FunctionComponent<OwnProps> = ({
+  component: Component,
+  title,
+  isPrivate,
+  ...rest
+}) => {
   return (
     <Page title={title}>
-      <Component {...rest} />;
+      <Component {...rest} />
     </Page>
   );
 };

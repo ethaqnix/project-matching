@@ -1,4 +1,5 @@
 import NotFound from "../pages/NotFound";
+import ProjectView from "../pages/Project";
 
 export interface IRoute {
   title: string;
@@ -12,7 +13,7 @@ const routes: IRoute[] = [
   {
     title: "home",
     path: "/",
-    component: NotFound,
+    component: ProjectView,
     isPrivate: false,
     onMenu: true,
   },

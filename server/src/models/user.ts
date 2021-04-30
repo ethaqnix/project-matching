@@ -5,9 +5,9 @@ const User = new mongoose.Schema(
   {
     firstName: String,
     lastName: String,
-    skills: Array(mongoose.Types.ObjectId),
-    projects: Array(mongoose.Types.ObjectId),
-    needs: Array(mongoose.Types.ObjectId),
+    skills: Array(String),
+    projects: Array(String),
+    needs: Array(String),
   },
   { timestamps: true }
 );

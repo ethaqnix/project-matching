@@ -13,7 +13,7 @@ export default (app: Router) => {
   });
 
   route.get("/:userId", async (req: Request, res: Response) => {
-    const userList = await usersCollection.find({ _id: req.params.userId });
+    const userList = await usersCollection.findById(req.params.userId);
     res.send(userList);
   });
 
