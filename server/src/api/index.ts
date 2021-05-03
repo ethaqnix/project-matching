@@ -11,5 +11,6 @@ export default () => {
   users(app);
   projects(app);
   skills(app);
+  match(app);
   return app;
 };
