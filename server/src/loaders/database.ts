@@ -10,12 +10,18 @@ import { Types as MongooseTypes } from "mongoose";
 
 export default async (): Promise<void> => {
   const skills = await skillsCollection.find();
+  const skillIds = {};
   if (skills.length === 0) {
     await skillsCollection.insertMany(
-      list_of_needs.map((need) => ({
-        _id: MongooseTypes.ObjectId(need.id),
-        content: need.content,
-      }))
+      list_of_needs.map((need) => {
+        const skillId = MongooseTypes.ObjectId(need.id);
+        skillIds[need.id] = skillId;
+
+        return {
+          _id: skillId,
+          content: need.content,
+        };
+      })
     );
   }
 
@@ -36,10 +42,8 @@ export default async (): Promise<void> => {
           _id: MongooseTypes.ObjectId(id),
           lastName: currentUserLastName,
           firstName: currentUserFirstName,
-          skills: currentUserSkills.map((skill) =>
-            MongooseTypes.ObjectId(skill.id)
-          ),
-          needs: needs.map((need) => MongooseTypes.ObjectId(need.id)),
+          skills: currentUserSkills.map((skill) => skillIds[skill.id]),
+          needs: needs.map((need) => skillIds[need.id]),
           projects: currentUserProjects.map(
             ({ id: projectId, name, description }) => {
               const mongoProjectId = MongooseTypes.ObjectId(projectId);
@@ -62,7 +66,7 @@ export default async (): Promise<void> => {
             _id: MongooseTypes.ObjectId(id),
             firstName: first_name,
             lastName: last_name,
-            skills: currentUserSkills?.map((skill) => skill.id) || [],
+            skills: currentUserSkills?.map((skill) => skillIds[skill.id]) || [],
             projects: userProjects.map(
               ({ id: projectId, name, description }) => {
                 const MongoProjectId = MongooseTypes.ObjectId(projectId);

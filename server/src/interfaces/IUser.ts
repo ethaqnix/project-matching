@@ -4,7 +4,7 @@ export interface IUser {
   lastName: string;
   skills: string[];
   projects: string[];
-  needs: string[];
+  needs?: string[];
 }
 
 export interface IUserInputDTO {
