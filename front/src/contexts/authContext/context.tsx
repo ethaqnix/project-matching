@@ -1,10 +1,10 @@
-import React, { useReducer } from "react";
+import React, { FunctionComponent, useEffect, useReducer } from "react";
 import { AuthAction } from "./actions";
 import { initialAuthState, AuthReducer, IAuthState } from "./reducer";
-
 const AuthStateContext = React.createContext<IAuthState>(initialAuthState);
-const AuthDispatchContext = React.createContext<React.Dispatch<AuthAction> | null>(
-  null
+
+const AuthDispatchContext = React.createContext<React.Dispatch<AuthAction>>(
+  () => {}
 );
 
 export function useAuthState() {
@@ -25,17 +25,38 @@ export const useAuthDispatch = () => {
   return context;
 };
 
-export const useAuth = (): [IAuthState, React.Dispatch<AuthAction> | null] => {
+export const useAuth = (): [IAuthState, React.Dispatch<AuthAction>] => {
   const stateContext = React.useContext(AuthStateContext);
-  const dispatchContext = React.useContext(AuthDispatchContext);
+  const dispatchContext = React.useContext<React.Dispatch<AuthAction>>(
+    AuthDispatchContext
+  );
   if (stateContext === undefined || dispatchContext === undefined) {
     throw new Error("useAuth must be used within a AuthProvider");
   }
   return [stateContext, dispatchContext];
 };
 
-export const AuthProvider: any = ({ children }: any) => {
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider: FunctionComponent<AuthProviderProps> = ({
+  children,
+}: any) => {
   const [value, dispatch] = useReducer(AuthReducer, initialAuthState);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const result = await fetch("http://localhost:8080/users/myself", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      const passport = await result.json();
+
+      dispatch({ type: "SET_PASSPORT", payload: passport });
+    };
+    fetchData();
+  }, []);
 
   return (
     <AuthStateContext.Provider value={value}>

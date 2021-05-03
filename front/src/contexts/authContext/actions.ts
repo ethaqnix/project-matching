@@ -10,13 +10,25 @@ interface ILoginAction {
   payload: IUser;
 }
 
-export type AuthAction = ILoginAction | ILogoutAction;
+interface ISetPassportAction {
+  type: "SET_PASSPORT";
+  payload: IUser;
+}
+
+export type AuthAction = ILoginAction | ILogoutAction | ISetPassportAction;
 
 export const loginUser = async (
-  dispatch: Dispatch<ILoginAction>,
+  dispatch: Dispatch<ISetPassportAction>,
   payload: IUser
 ) => {
-  dispatch({ type: "LOGIN", payload });
+  dispatch({ type: "SET_PASSPORT", payload });
+};
+
+export const setUserPassport = async (
+  dispatch: Dispatch<ISetPassportAction>,
+  payload: IUser
+) => {
+  dispatch({ type: "SET_PASSPORT", payload });
 };
 
 export const logout = async (dispatch: Dispatch<ILogoutAction>) => {
