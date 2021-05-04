@@ -7,7 +7,9 @@ import {
 } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
 import Match from "../Match";
+import Needs from "./Needs";
 import PersonalInformations from "./PersonalInformations";
+import Skills from "./Skills";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,6 +34,10 @@ const Home: FunctionComponent<OwnProps> = () => {
     <Container className={classes.root}>
       <Paper className={classes.paper}>
         <PersonalInformations />
+      </Paper>
+      <Paper className={classes.paper}>
+        <Needs />
+        <Skills />
       </Paper>
       <Paper elevation={2} className={classes.paper}>
         <Match />
