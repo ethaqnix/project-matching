@@ -4,7 +4,12 @@ import routes from "./routes/routes";
 import AppRoute from "./routes/AppRoute";
 import { AuthProvider } from "./contexts/authContext";
 
+export const API_URL = "http://localhost:8080";
+
 function App() {
+  if (localStorage.getItem("authorization")) {
+  }
+
   return (
     <>
       <AuthProvider>

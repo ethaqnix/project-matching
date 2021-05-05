@@ -8,8 +8,8 @@ export interface IAuthState {
 }
 
 export const initialAuthState = {
-  loading: false,
-  connected: true,
+  loading: true,
+  connected: false,
 };
 
 export const AuthReducer = (
@@ -21,8 +21,8 @@ export const AuthReducer = (
       return {
         ...initialState,
         passport: action.payload,
-        loading: true,
-        connected: false,
+        loading: false,
+        connected: true,
       };
     case "SET_PASSPORT":
       return {
@@ -32,7 +32,7 @@ export const AuthReducer = (
     case "LOGOUT":
       return {
         ...initialState,
-        connected: true,
+        connected: false,
         loading: false,
       };
     default:

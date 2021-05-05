@@ -8,10 +8,11 @@ const SecuredRoute: FunctionComponent<OwnProps> = ({
   component: Component,
   title,
   isPrivate,
+  onMenu,
   ...rest
 }) => {
   return (
-    <Page title={title}>
+    <Page title={title} onMenu={onMenu}>
       <Component {...rest} />
     </Page>
   );

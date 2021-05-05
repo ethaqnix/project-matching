@@ -1,4 +1,5 @@
 import React, { FunctionComponent, useEffect, useReducer } from "react";
+import { getUser } from "../../api/users";
 import { AuthAction } from "./actions";
 import { initialAuthState, AuthReducer, IAuthState } from "./reducer";
 const AuthStateContext = React.createContext<IAuthState>(initialAuthState);
@@ -38,25 +39,36 @@ export const useAuth = (): [IAuthState, React.Dispatch<AuthAction>] => {
 
 interface AuthProviderProps {
   children: React.ReactNode;
+  initialState?: Partial<AuthProviderProps>;
 }
 
 export const AuthProvider: FunctionComponent<AuthProviderProps> = ({
   children,
+  initialState,
 }: any) => {
-  const [value, dispatch] = useReducer(AuthReducer, initialAuthState);
+  const [value, dispatch] = useReducer(AuthReducer, {
+    ...initialState,
+    ...initialAuthState,
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await fetch("http://localhost:8080/users/myself", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
+    const fetchData = async (id: string) => {
+      const passport = await getUser(id);
+      dispatch({
+        type: "LOGIN",
+        payload: passport,
       });
-      const passport = await result.json();
-
-      dispatch({ type: "SET_PASSPORT", payload: passport });
+      dispatch({ type: "SET_SIGNIN_CURRENTLY_LOADING", payload: false });
     };
-    fetchData();
-  }, []);
+    const user = localStorage.getItem("user");
+    if (user) {
+      fetchData(user);
+    } else {
+      dispatch({
+        type: "LOGOUT",
+      });
+    }
+  }, [localStorage.getItem("user")]);
 
   return (
     <AuthStateContext.Provider value={value}>

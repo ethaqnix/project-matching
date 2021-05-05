@@ -4,6 +4,7 @@ import SecuredRoute from "./SecuredRoute";
 
 import React, { FunctionComponent } from "react";
 import { IRoute } from "./routes";
+import { useAuthState } from "../contexts/authContext";
 
 type OwnProps = IRoute;
 
@@ -12,13 +13,17 @@ const AppRoutes: FunctionComponent<OwnProps> = ({
   path,
   isPrivate,
   title,
-  onMenu
+  onMenu,
 }) => {
+  const { connected, loading } = useAuthState();
+  console.log("AppRoute", `connected: ${connected} | loading: ${loading}`);
+
+  if (!connected && loading) return null;
   return (
     <Route
       path={path}
       render={() =>
-        isPrivate && !Boolean(false) ? (
+        isPrivate && !Boolean(connected) ? (
           <Redirect to={{ pathname: "/login" }} />
         ) : (
           <SecuredRoute

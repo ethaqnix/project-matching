@@ -1,6 +1,7 @@
 import NotFound from "../pages/NotFound";
 import ProjectView from "../pages/Home";
 import Match from "../pages/Match";
+import Login from "../pages/Login";
 
 export interface IRoute {
   title: string;
@@ -12,9 +13,9 @@ export interface IRoute {
 
 const routes: IRoute[] = [
   {
-    title: "Match",
-    path: "/match",
-    component: Match,
+    title: "login",
+    path: "/login",
+    component: Login,
     isPrivate: false,
     onMenu: false,
   },
@@ -22,10 +23,9 @@ const routes: IRoute[] = [
     title: "Home",
     path: "/",
     component: ProjectView,
-    isPrivate: false,
+    isPrivate: true,
     onMenu: true,
   },
-
   {
     title: "Page not founds",
     path: "/*",

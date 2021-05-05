@@ -1,17 +1,22 @@
 import { makeStyles, Theme } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
+import { useAuthState } from "../contexts/authContext";
 import Header from "./Header";
 
 const useStyles = makeStyles((theme: Theme) => ({
-  appContent: { display: "flex", flexGrow: 1, backgroundColor: "aliceblue" }
+  appContent: { display: "flex", flexGrow: 1, backgroundColor: "aliceblue" },
 }));
 
 type OwnProps = {
   title: string;
+  onMenu: boolean;
   children: React.ReactNode;
 };
 
-const Page: FunctionComponent<OwnProps> = ({ title, children }) => {
+const Page: FunctionComponent<OwnProps> = ({ title, onMenu, children }) => {
+  const { connected } = useAuthState();
+  console.log("Page :", connected);
+
   const classes = useStyles();
   return (
     <div
@@ -21,12 +26,8 @@ const Page: FunctionComponent<OwnProps> = ({ title, children }) => {
         flexDirection: "column",
       }}
     >
-      <Header title={title} />
-      <div
-        className={classes.appContent}
-      >
-        {children}
-      </div>
+      {connected && <Header title={title} />}
+      <div className={classes.appContent}>{children}</div>
     </div>
   );
 };
