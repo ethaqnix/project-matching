@@ -9,5 +9,15 @@
   "dependencies": {
     "express": "4.17.1",
     "nodemon": "2.0.3"
+  },
+  "bin": "./index.js",
+  "pkg": {
+    "assets": [
+      "public/**/*"
+    ],
+    "targets": [
+      "node12-macos-x64",
+      "node10-win-x64"
+    ]
   }
 }
