@@ -6,12 +6,14 @@ const User = new mongoose.Schema(
     _id: {
       type: mongoose.Types.ObjectId,
       required: true,
+      auto: true,
     },
     firstName: String,
     lastName: String,
     skills: Array(mongoose.Types.ObjectId),
     projects: Array(mongoose.Types.ObjectId),
     needs: Array(mongoose.Types.ObjectId),
+    password: String,
   },
   { timestamps: true }
 );

@@ -5,7 +5,6 @@
   "main": "src/app.ts",
   "scripts": {
     "build": "tsc",
-    "heroku-postbuild": "npm run build",
     "start": "nodemon",
     "inspect": "nodemon --inspect src/app.ts",
     "test": "jest"
@@ -13,6 +12,7 @@
   "author": "ethaqnix",
   "license": "ISC",
   "dependencies": {
+    "argon2": "^0.27.2",
     "celebrate": "^13.0.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -26,7 +26,6 @@
     "@types/express": "^4.17.8",
     "@types/jest": "^26.0.14",
     "@types/lodash": "^4.14.161",
-    "@types/mongoose": "^5.7.36",
     "@types/node": "^14.11.2",
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",
@@ -40,5 +39,15 @@
     "ts-node": "^9.0.0",
     "tslint": "^5.20.1",
     "typescript": "^4.0.3"
+  },
+  "bin": "build/App.js",
+  "pkg": {
+    "assets": [
+      "build/**/*"
+    ],
+    "targets": [
+      "node12-macos-x64",
+      "node10-win-x64"
+    ]
   }
 }

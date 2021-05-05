@@ -1,13 +1,14 @@
 import { Router, Request, Response } from "express";
 import { projectsCollection, skillsCollection } from "../../models";
 import usersCollection from "../../models/user";
+import middlewares from "../middlewares";
 
 const route = Router();
 
 export default (app: Router) => {
   app.use("/users", route);
 
-  route.get("/", async (req: Request, res: Response) => {
+  route.get("/", middlewares.isAuth, async (req: Request, res: Response) => {
     const userList = await usersCollection.find({});
 
     res.send(userList);
