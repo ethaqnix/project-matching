@@ -24,25 +24,12 @@ type OwnProps = {};
 const Match: FunctionComponent<OwnProps> = () => {
   const classes = useStyles();
   const [match, setMatch] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { passport } = useAuthState();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await fetch(
-        `http://localhost:8080/match/${passport ? passport!._id : ""}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      const matchResponse = await result.json();
-      setLoading(false);
-      setMatch(matchResponse);
-    };
-
-    if (passport && passport._id) fetchData();
-  }, [passport]);
+    setMatch([]);
+  }, [passport, passport?.needs]);
 
   const handleMatchClick = async () => {
     setLoading(true);
@@ -61,9 +48,8 @@ const Match: FunctionComponent<OwnProps> = () => {
   return (
     <div className={classes.root}>
       <Button onClick={handleMatchClick}>test</Button>
-
       {loading && <Loader />}
-      {match.length && match.map((user: IMatch) => <UserMatch user={user} />)}
+      {!!match.length && match.map((user: IMatch) => <UserMatch user={user} />)}
     </div>
   );
 };

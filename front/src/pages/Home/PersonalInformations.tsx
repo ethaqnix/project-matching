@@ -3,6 +3,9 @@ import React, { FunctionComponent } from "react";
 import { useAuthState } from "../../contexts/authContext";
 
 const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    margin: theme.spacing(1),
+  },
   bold: {
     fontWeight: 600,
   },
@@ -18,7 +21,7 @@ const PersonalInformations: FunctionComponent<OwnProps> = () => {
 
   const classes = useStyles();
   return (
-    <div>
+    <div className={classes.root}>
       <Typography variant="h6" className={classes.line}>
         <div className={classes.bold}>First name :</div>
         {`${passport?.firstName}`}
