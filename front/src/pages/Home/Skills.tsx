@@ -1,45 +1,37 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent } from "react";
+import { updateUser } from "../../api/users";
+import { API_URL } from "../../App";
 import MultipleSelectFromServer from "../../components/MultipleSelectFromServer";
-import { useAuthState } from "../../contexts/authContext";
+import { useAuth } from "../../contexts/authContext/context";
 import { ISkill } from "../../interfaces";
 
 type OwnProps = {};
 
 const Skills: FunctionComponent<OwnProps> = () => {
-  const { passport } = useAuthState();
-  const [defaultValue, setDefaultValue] = useState<{ name: string }[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!passport) return;
-    setDefaultValue(
-      passport.skills.map((skill: any) => ({ name: skill.content }))
-    );
-    setLoading(false);
-  }, [passport]);
+  const [{ passport }, setAuth] = useAuth();
 
   const resolver = (data: ISkill[]) => {
     if (Array.isArray(data)) {
-      return data.map((skill) => ({ name: skill.content }));
+      return data.map((skill) => ({ name: skill.content, id: skill._id }));
     }
     return [];
   };
 
-  const onSkillsChange = (data: any) => {
-    if (passport)
-      fetch(`http://localhost:8080/users/${passport._id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ skills: data.map((e: any) => e.name) }),
+  const onSkillsChange = async (newSkills: any) => {
+    if (passport) {
+      const updatedUser = await updateUser(passport._id, {
+        skills: newSkills.map((newSkill: { id: string }) => newSkill.id),
       });
+
+      setAuth({ type: "SET_PASSPORT", payload: updatedUser });
+    }
   };
-  if (loading) return null;
   return (
     <MultipleSelectFromServer
       title={"skills"}
-      request={"http://localhost:8080/skills"}
+      request={`${API_URL}/skills`}
       resolveResponse={resolver}
-      defaultValue={defaultValue || []}
+      value={passport?.skills || []}
       onChange={onSkillsChange}
     />
   );

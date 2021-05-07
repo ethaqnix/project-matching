@@ -1,4 +1,5 @@
 import { Dispatch } from "react";
+import { ISignin } from "../../api/api";
 import { signin, signup } from "../../api/auth";
 import { IUser } from "../../interfaces";
 
@@ -16,6 +17,11 @@ interface ISetPassportAction {
   payload: IUser;
 }
 
+interface IPatchPassportAction {
+  type: "PATCH_PASSPORT";
+  payload: Partial<IUser>;
+}
+
 interface ISetSigninCurrentlyLoadingAction {
   type: "SET_SIGNIN_CURRENTLY_LOADING";
   payload: boolean;
@@ -31,13 +37,14 @@ export type AuthAction =
   | ILogoutAction
   | ISetPassportAction
   | ISetSigninCurrentlyLoadingAction
-  | ILoginErrorAction;
+  | ILoginErrorAction
+  | IPatchPassportAction;
 
 export const loginUser = async (
   dispatch: Dispatch<
     ILoginAction | ILoginErrorAction | ISetSigninCurrentlyLoadingAction
   >,
-  payload: IUser & { password: string }
+  payload: ISignin
 ) => {
   dispatch({ type: "SET_SIGNIN_CURRENTLY_LOADING", payload: true });
   try {
@@ -65,7 +72,7 @@ export const signupUser = async (
   dispatch: Dispatch<
     ILoginAction | ILoginErrorAction | ISetSigninCurrentlyLoadingAction
   >,
-  payload: IUser & { password: string }
+  payload: ISignin
 ) => {
   dispatch({ type: "SET_SIGNIN_CURRENTLY_LOADING", payload: true });
   try {
@@ -94,6 +101,13 @@ export const setUserPassport = async (
   payload: IUser
 ) => {
   dispatch({ type: "SET_PASSPORT", payload });
+};
+
+export const patchUserPassport = async (
+  dispatch: Dispatch<IPatchPassportAction>,
+  payload: Partial<IUser>
+) => {
+  dispatch({ type: "PATCH_PASSPORT", payload });
 };
 
 export const logout = async (dispatch: Dispatch<ILogoutAction>) => {

@@ -1,11 +1,6 @@
 import { API_URL } from "../App";
 import { IUser } from "../interfaces";
-
-interface ISignin {
-  firstName: string;
-  lastName: string;
-  password: string;
-}
+import { ISignin } from "./api";
 
 const signin = async (user: ISignin) => {
   const requestOptions = {
@@ -21,12 +16,13 @@ const signin = async (user: ISignin) => {
   return data;
 };
 
-const signup = async (user: IUser) => {
+const signup = async (user: Partial<IUser> & ISignin) => {
   const requestOptions = {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(user),
   };
   let response = await fetch(`${API_URL}/auth/signup`, requestOptions);
   let data = await response.json();
@@ -35,3 +31,10 @@ const signup = async (user: IUser) => {
 };
 
 export { signin, signup };
+
+const authApi = {
+  signup,
+  signin,
+};
+
+export default authApi;

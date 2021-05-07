@@ -1,4 +1,11 @@
-import { makeStyles, Theme, createStyles, Button } from "@material-ui/core";
+import {
+  makeStyles,
+  Theme,
+  createStyles,
+  Button,
+  FormControlLabel,
+  Switch,
+} from "@material-ui/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import Loader from "../../components/Loader";
 import { useAuthState } from "../../contexts/authContext/context";
@@ -25,19 +32,26 @@ const Match: FunctionComponent<OwnProps> = () => {
   const classes = useStyles();
   const [match, setMatch] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [includeContacts, setIncludeContacts] = useState(true);
   const { passport } = useAuthState();
+  const { needs } = passport || {};
 
   useEffect(() => {
     setMatch([]);
-  }, [passport, passport?.needs]);
+  }, [needs]);
 
   const handleMatchClick = async () => {
     setLoading(true);
     const result = await fetch(
-      `http://localhost:8080/match/${passport ? passport!._id : ""}`,
+      `http://localhost:8080/match/${passport ? passport!._id : ""}?contacts=${
+        includeContacts ? 1 : 0
+      }`,
       {
         method: "GET",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("authorization") || "",
+        },
       }
     );
     const matchResponse = await result.json();
@@ -47,9 +61,33 @@ const Match: FunctionComponent<OwnProps> = () => {
 
   return (
     <div className={classes.root}>
-      <Button onClick={handleMatchClick}>test</Button>
+      <div>
+        <Button onClick={handleMatchClick}>GET MY MATCH</Button>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={includeContacts}
+              onChange={(e) => setIncludeContacts(e.target.checked)}
+              name="Include contacts"
+              color="primary"
+            />
+          }
+          label="Include contacts"
+        />
+      </div>
       {loading && <Loader />}
-      {!!match.length && match.map((user: IMatch) => <UserMatch user={user} />)}
+      {!!match.length &&
+        match.map((user: IMatch) => {
+          return (
+            <UserMatch
+              key={`match_${user._id}`}
+              user={user}
+              contacted={
+                !!passport?.contacts.find((contact) => contact === user._id)
+              }
+            />
+          );
+        })}
     </div>
   );
 };

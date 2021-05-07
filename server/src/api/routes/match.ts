@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { skillsCollection, usersCollection } from "../../models";
+import { usersCollection } from "../../models";
 import middlewares from "../middlewares";
 
 const route = Router();

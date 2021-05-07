@@ -16,8 +16,6 @@ const AppRoutes: FunctionComponent<OwnProps> = ({
   onMenu,
 }) => {
   const { connected, loading } = useAuthState();
-  console.log("AppRoute", `connected: ${connected} | loading: ${loading}`);
-
   if (!connected && loading) return null;
   return (
     <Route

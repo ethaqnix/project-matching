@@ -1,11 +1,11 @@
-import { makeStyles, Theme } from "@material-ui/core";
+import { Button, makeStyles, Theme } from "@material-ui/core";
 import React, { FunctionComponent } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import Menu from "./Menu";
-
+import { logout, useAuthDispatch } from "../contexts/authContext";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
@@ -22,16 +22,25 @@ type OwnProps = {
 };
 
 const Header: FunctionComponent<OwnProps> = ({ title }) => {
+  const setAuth = useAuthDispatch();
+  const history = useHistory();
   const classes = useStyles();
+
+  const handleLogout = () => {
+    logout(setAuth);
+    history.push("/login");
+  };
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          <Menu />
           <Typography variant="h6" className={classes.title}>
             {title}
           </Typography>
+          <Button color="inherit" onClick={handleLogout}>
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
     </div>

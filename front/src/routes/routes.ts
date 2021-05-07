@@ -1,8 +1,6 @@
 import NotFound from "../pages/NotFound";
 import ProjectView from "../pages/Home";
-import Match from "../pages/Match";
 import Login from "../pages/Login";
-
 export interface IRoute {
   title: string;
   path: string;

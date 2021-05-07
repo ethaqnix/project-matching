@@ -51,6 +51,8 @@ export const AuthProvider: FunctionComponent<AuthProviderProps> = ({
     ...initialAuthState,
   });
 
+  const currentUser = localStorage.getItem("user");
+
   useEffect(() => {
     const fetchData = async (id: string) => {
       const passport = await getUser(id);
@@ -68,7 +70,7 @@ export const AuthProvider: FunctionComponent<AuthProviderProps> = ({
         type: "LOGOUT",
       });
     }
-  }, [localStorage.getItem("user")]);
+  }, [currentUser]);
 
   return (
     <AuthStateContext.Provider value={value}>

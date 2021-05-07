@@ -15,8 +15,6 @@ type OwnProps = {
 
 const Page: FunctionComponent<OwnProps> = ({ title, onMenu, children }) => {
   const { connected } = useAuthState();
-  console.log("Page :", connected);
-
   const classes = useStyles();
   return (
     <div

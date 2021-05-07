@@ -4,6 +4,7 @@ import { AuthAction } from "./actions";
 export interface IAuthState {
   loading: boolean;
   connected: boolean;
+  errorMessage?: string;
   passport?: IUser;
 }
 
@@ -29,6 +30,16 @@ export const AuthReducer = (
         ...initialState,
         passport: action.payload,
       };
+    case "PATCH_PASSPORT":
+      if (initialState.passport)
+        return {
+          ...initialState,
+          passport: {
+            ...initialState.passport,
+            ...action.payload,
+          },
+        };
+      return initialState;
     case "LOGOUT":
       return {
         ...initialState,

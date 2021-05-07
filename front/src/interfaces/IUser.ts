@@ -5,9 +5,20 @@ export interface IUser {
   _id: string;
   firstName: string;
   lastName: string;
-  skills: string[] | Partial<ISkill>[];
-  projects: string[] | Partial<IProject>[];
-  needs: string[] | Partial<ISkill>[];
+  skills: string[];
+  projects: string[];
+  needs: string[];
+  contacts: string[];
+}
+
+export interface IFullUser {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  skills: ISkill[];
+  projects: IProject[];
+  needs: ISkill[];
+  contacts: string[];
 }
 
 export interface IUserInputDTO {

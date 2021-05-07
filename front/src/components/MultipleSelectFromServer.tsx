@@ -1,59 +1,69 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface Option {
   name: string;
+  id: string;
 }
 
 interface OwnProps {
   request: string;
   resolveResponse(response: any): Option[];
   onChange(change: Option | Option[]): void;
-  defaultValue: Option | Option[];
   multiple?: boolean;
   title: string;
+  value: string | string[];
 }
 
 const MultipleSelectFromServer: FunctionComponent<OwnProps> = ({
   title,
   request,
   resolveResponse,
-  defaultValue,
+  value,
   onChange,
   multiple = true,
 }) => {
-  const [open, setOpen] = React.useState(false);
-  const [options, setOptions] = React.useState<Option[]>([]);
-  const loading = open && options.length === 0;
+  const [open, setOpen] = useState(false);
+  const [options, setOptions] = useState<Option[]>([]);
+  const [formattedValue, setFormattedValue] = useState<Option[] | Option>([]);
 
-  React.useEffect(() => {
-    let active = true;
+  const [loading, setLoading] = useState(false);
 
-    if (!loading) {
-      return undefined;
-    }
-
-    (async () => {
+  useEffect(() => {
+    const fetchdata = async () => {
       const response = await fetch(request);
       const result = await response.json();
 
-      if (active) {
-        setOptions(resolveResponse(result));
-      }
-    })();
-
-    return () => {
-      active = false;
+      return result;
     };
-  }, [loading, resolveResponse, request]);
 
-  React.useEffect(() => {
-    if (!open) {
-      setOptions([]);
+    if (!loading) {
+      fetchdata().then((response) => {
+        setOptions(resolveResponse(response));
+        setLoading(false);
+      });
     }
-  }, [open]);
+    return () => {};
+  }, [request, loading, resolveResponse]);
+
+  useEffect(() => {
+    if (options.length) {
+      if (Array.isArray(value)) {
+        setFormattedValue(
+          value.reduce((acc: Option[], item: string) => {
+            const relatedOption = options.find((option) => option.id === item);
+            if (!relatedOption) return acc;
+            return [...acc, relatedOption];
+          }, [])
+        );
+      } else {
+        const relatedOption = options.find((option) => option.id === value);
+        if (relatedOption) setFormattedValue(relatedOption);
+      }
+    }
+  }, [value, options]);
 
   return (
     <Autocomplete
@@ -69,11 +79,11 @@ const MultipleSelectFromServer: FunctionComponent<OwnProps> = ({
       onChange={(e, value) => {
         onChange(value || []);
       }}
-      getOptionSelected={(option, value) => option.name === value.name}
+      getOptionSelected={(option, value) => option.id === value.id}
       getOptionLabel={(option) => option.name}
       options={options}
       loading={loading}
-      defaultValue={defaultValue}
+      value={formattedValue}
       renderInput={(params) => (
         <TextField
           {...params}

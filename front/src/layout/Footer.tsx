@@ -4,7 +4,6 @@ import React, { FunctionComponent } from "react";
 type OwnProps = {};
 
 const useStyles = makeStyles((theme) => {
-  console.log(theme);
   return {
     root: { height: 50, backgroundColor: theme.palette.primary.main },
   };
