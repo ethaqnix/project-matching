@@ -13,6 +13,7 @@ const User = new mongoose.Schema(
     skills: Array(mongoose.Types.ObjectId),
     projects: Array(mongoose.Types.ObjectId),
     needs: Array(mongoose.Types.ObjectId),
+    contacts: Array(mongoose.Types.ObjectId),
     password: String,
   },
   { timestamps: true }

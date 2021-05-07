@@ -5,6 +5,7 @@ export interface IUser {
   skills?: string[];
   projects?: string[];
   needs?: string[];
+  contacts?: string[];
   password: string;
 }
 

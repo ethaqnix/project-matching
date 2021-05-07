@@ -1,4 +1,5 @@
 import { Router, Request, Response } from "express";
+import { IUser } from "../../interfaces";
 import { projectsCollection, skillsCollection } from "../../models";
 import usersCollection from "../../models/user";
 import middlewares from "../middlewares";
@@ -14,54 +15,58 @@ export default (app: Router) => {
     res.send(userList);
   });
 
-  route.get("/myself", async (req: Request, res: Response) => {
-    const user = await usersCollection.aggregate([
-      {
-        $match: {
-          firstName: "John",
-          lastName: "Smith",
+  route.get(
+    "/myself",
+    middlewares.isAuth,
+    async (req: Request, res: Response) => {
+      const user = await usersCollection.aggregate([
+        {
+          $match: {
+            firstName: "John",
+            lastName: "Smith",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "skills",
-          let: { skills: "$skills" },
-          pipeline: [
-            { $match: { $expr: { $in: ["$_id", "$$skills"] } } },
-            { $project: { __v: 0, createdAt: 0, updatedAt: 0 } },
-          ],
-          as: "skills",
+        {
+          $lookup: {
+            from: "skills",
+            let: { skills: "$skills" },
+            pipeline: [
+              { $match: { $expr: { $in: ["$_id", "$$skills"] } } },
+              { $project: { __v: 0, createdAt: 0, updatedAt: 0 } },
+            ],
+            as: "skills",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "projects",
-          let: { projects: "$projects" },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $in: ["$_id", { $ifNull: ["$$projects", []] }] },
+        {
+          $lookup: {
+            from: "projects",
+            let: { projects: "$projects" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $in: ["$_id", { $ifNull: ["$$projects", []] }] },
+                },
               },
-            },
-            { $project: { __v: 0, createdAt: 0, updatedAt: 0, _id: 0 } },
-          ],
-          as: "projects",
+              { $project: { __v: 0, createdAt: 0, updatedAt: 0, _id: 0 } },
+            ],
+            as: "projects",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "skills",
-          let: { needs: "$needs" },
-          pipeline: [
-            { $match: { $expr: { $in: ["$_id", "$$needs"] } } },
-            { $project: { __v: 0, createdAt: 0, updatedAt: 0, _id: 0 } },
-          ],
-          as: "needs",
+        {
+          $lookup: {
+            from: "skills",
+            let: { needs: "$needs" },
+            pipeline: [
+              { $match: { $expr: { $in: ["$_id", "$$needs"] } } },
+              { $project: { __v: 0, createdAt: 0, updatedAt: 0, _id: 0 } },
+            ],
+            as: "needs",
+          },
         },
-      },
-    ]);
-    res.send(user.length ? user[0] : { error: "User not connected" });
-  });
+      ]);
+      res.send(user.length ? user[0] : { error: "User not connected" });
+    }
+  );
 
   route.get("/:userId", async (req: Request, res: Response) => {
     const userList = await usersCollection.findById(req.params.userId);
@@ -76,27 +81,11 @@ export default (app: Router) => {
   });
 
   route.patch("/:userId", async (req: Request, res: Response) => {
-    console.log(req.body);
-
-    const payload = {};
-    if (req.body.needs) {
-      const needsChange = req.body.needs || [];
-      const needs = await skillsCollection.find({
-        content: { $in: needsChange },
-      });
-      const needsIds = needs.map((skill) => skill._id);
-      payload["needs"] = needsIds;
-    }
-    if (req.body.skills) {
-      const skillsChange = req.body.skills || [];
-      const skills = await skillsCollection.find({
-        content: { $in: skillsChange },
-      });
-      const skillsIds = skills.map((skill) => skill._id);
-
-      payload["skills"] = skillsIds;
-    }
-    console.log(payload);
+    const { needs, skills, projects } = req.body;
+    const payload: Partial<IUser> = {};
+    if (needs) payload.needs = needs;
+    if (skills) payload.skills = skills;
+    if (needs) payload.projects = projects;
 
     const update = await usersCollection.updateOne(
       { _id: req.params.userId },
@@ -109,4 +98,31 @@ export default (app: Router) => {
 
     res.send(updatedUser);
   });
+
+  route.post(
+    "/:userId/contact",
+    middlewares.isAuth,
+    middlewares.attachCurrentUser,
+    async (req: Request, res: Response) => {
+      const currentUser = req.currentUser;
+
+      const update = await usersCollection.updateOne(
+        { _id: req.params.userId },
+        {
+          $push: {
+            contacts: currentUser._id,
+          },
+        }
+      );
+
+      const update2 = await usersCollection.updateOne(
+        { _id: currentUser._id },
+        {
+          $push: {
+            contacts: req.params.userId,
+          },
+        }
+      );
+    }
+  );
 };

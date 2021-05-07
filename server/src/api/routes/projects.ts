@@ -13,8 +13,6 @@ export default (app: Router) => {
   });
 
   route.get("/:id", async (req: Request, res: Response, next: NextFunction) => {
-    console.log(req.params.id);
-
     const result = await projectsCollection.findById(req.params.id);
     res.send(result);
   });
